@@ -1,0 +1,23 @@
+{
+  "name": "server-monitor",
+  "main": "index.js",
+  "version": "0.0.0",
+  "authors": [
+    "Shepless <chris.shepherd1985@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "www/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "highcharts-release": "~4.1.4",
+    "prettysize": "*",
+    "bootstrap": "~3.3.4"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "server-monitor",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shepless (http://shepless.github.io/)",
+  "license": "ISC",
+  "dependencies": {
+    "os-monitor": "~1.0.3",
+    "prettysize": "0.0.3",
+    "express": "~4.12.3",
+    "socket.io": "~1.3.5"
+  }
+}

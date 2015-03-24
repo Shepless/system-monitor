@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>System Monitor</title>
+    <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="bower_components/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            padding-top: 50px;
+        }
+
+        .panel {
+            margin: 2%;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">System Monitor</a>
+    </div>
+</nav>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">CPU Usage</h3>
+            </div>
+            <div class="panel-body">
+                <div id="cpu-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Memory Usage</h3>
+            </div>
+            <div class="panel-body">
+                <div id="memory-chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="bower_components/prettysize/prettysize.js"></script>
+<script src="bower_components/highcharts-release/adapters/standalone-framework.src.js"></script>
+<script src="bower_components/highcharts-release/highcharts.src.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var memoryChart = new Highcharts.Chart({
+        credits: {
+            enabled: false
+        },
+        chart: {
+            renderTo: 'memory-chart',
+            type: 'areaspline'
+        },
+        plotOptions: {
+            areaspline: {
+                stacking: 'normal',
+                marker: {
+                    enabled: false
+                }
+            }
+        },
+        title: {
+            text: null
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150,
+            maxZoom: 20 * 1000
+        },
+        yAxis: {
+            labels: {
+                formatter: function () {
+                    return prettysize(this.value);
+                }
+            }
+        },
+        tooltip: {
+            pointFormatter: function () {
+                return prettysize(this.y);
+            }
+        },
+        series: [{
+            id: 'used-memory',
+            stack: 0,
+            color: 'rgba(191, 1, 0, 0.5)',
+            name: 'Used Memory',
+            data: []
+        }, {
+            id: 'free-memory',
+            stack: 0,
+            color: 'rgba(164, 216, 111, 0.5)',
+            name: 'Free Memory',
+            data: []
+        }]
+    });
+
+    var cpuChart = new Highcharts.Chart({
+        credits: {
+            enabled: false
+        },
+        chart: {
+            renderTo: 'cpu-chart',
+            type: 'spline'
+        },
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: false
+                }
+            }
+        },
+        title: {
+            text: null
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150,
+            maxZoom: 20 * 1000
+        },
+        series: [{
+            id: 'load-average-one',
+            name: 'Load Average One',
+            data: []
+        }, {
+            id: 'load-average-two',
+            name: 'Load Average Two',
+            data: []
+        }, {
+            id: 'load-average-three',
+            name: 'Load Average Three',
+            data: []
+        }]
+    });
+
+    var socket = io();
+
+    socket.on('activity', function (data) {
+        var usedMemorySeries = memoryChart.get('used-memory'),
+                freeMemorySeries = memoryChart.get('free-memory'),
+                cpuLoadAverageOneSeries = cpuChart.get('load-average-one'),
+                cpuLoadAverageTwoSeries = cpuChart.get('load-average-two'),
+                cpuLoadAverageThreeSeries = cpuChart.get('load-average-three');
+
+        usedMemorySeries.addPoint({
+            x: data.timestamp * 1000,
+            y: data.totalmem - data.freemem
+        });
+
+        freeMemorySeries.addPoint({
+            x: data.timestamp * 1000,
+            y: data.freemem
+        });
+
+        console.log(data);
+
+        cpuLoadAverageOneSeries.addPoint({
+            x: data.timestamp * 1000,
+            y: data.loadavg[0]
+        }, false);
+
+        cpuLoadAverageTwoSeries.addPoint({
+            x: data.timestamp * 1000,
+            y: data.loadavg[1]
+        }, false);
+
+        cpuLoadAverageThreeSeries.addPoint({
+            x: data.timestamp * 1000,
+            y: data.loadavg[2]
+        });
+    });
+
+
+    //    socket.on('low memory', function (data) {
+    //        console.log(2, data);
+    //    });
+    //
+    //    socket.on('load average one', function (data) {
+    //        console.log(3, data);
+    //    });
+</script>
+</body>
+</html>
