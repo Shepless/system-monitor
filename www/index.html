@@ -140,7 +140,7 @@
 
     var socket = io();
 
-    socket.on('activity', function (data) {
+    socket.on('monitor', function (data) {
         var usedMemorySeries = memoryChart.get('used-memory'),
                 freeMemorySeries = memoryChart.get('free-memory'),
                 cpuLoadAverageOneSeries = cpuChart.get('load-average-one'),
@@ -157,8 +157,6 @@
             y: data.freemem
         });
 
-        console.log(data);
-
         cpuLoadAverageOneSeries.addPoint({
             x: data.timestamp * 1000,
             y: data.loadavg[0]
@@ -174,7 +172,6 @@
             y: data.loadavg[2]
         });
     });
-
 
     //    socket.on('low memory', function (data) {
     //        console.log(2, data);

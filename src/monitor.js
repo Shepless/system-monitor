@@ -1,11 +1,12 @@
-var monitor = require("os-monitor"),
-    eventManager = require('./event-manager');
+var monitor = require('os-monitor'),
+    eventManager = require('./event-manager'),
+    eventTypes = require('./event-types');
 
-monitor.on('monitor', eventManager.emit.bind(eventManager, 'activity'));
-monitor.on('loadavg1', eventManager.emit.bind(eventManager, 'load average one'));
-monitor.on('loadavg2', eventManager.emit.bind(eventManager, 'load average two'));
-monitor.on('loadavg3', eventManager.emit.bind(eventManager, 'load average three'));
-monitor.on('freemem', eventManager.emit.bind(eventManager, 'low memory'));
+monitor.on(eventTypes.MONITOR, eventManager.emit.bind(eventManager, eventTypes.MONITOR));
+monitor.on(eventTypes.LOAD_AVERAGE_ONE, eventManager.emit.bind(eventManager, eventTypes.LOAD_AVERAGE_ONE));
+monitor.on(eventTypes.LOAD_AVERAGE_TWO, eventManager.emit.bind(eventManager, eventTypes.LOAD_AVERAGE_TWO));
+monitor.on(eventTypes.LOAD_AVERAGE_THREE, eventManager.emit.bind(eventManager, eventTypes.LOAD_AVERAGE_THREE));
+monitor.on(eventTypes.LOW_MEMORY, eventManager.emit.bind(eventManager, eventTypes.LOW_MEMORY));
 
 exports.start = monitor.start.bind(monitor, {
     delay: 1000,
